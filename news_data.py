@@ -11,8 +11,13 @@ def get_news(company):
             print("No News")
             return None
         items = frame.find_all("div",class_="SoaBEf")
-        
+        ans_title = []
+        ans_url = []
         for item in items:
             print(item.find('div',class_="n0jPhd ynAwRc MBeuO nDgy9d").get_text())
             print(item.find('a')['href'])
+            ans_title.append(item.find('div',class_="n0jPhd ynAwRc MBeuO nDgy9d").get_text())
+            ans_url.append(item.find('a')['href'])
+
+        return (ans_title,ans_url)
 

@@ -1,14 +1,43 @@
 import news_data
 import stock
+import database
+
+import pandas as pd
+
 if __name__=='__main__':
-    conn,cursor = stock.connect_DB('stock.db')
+    conn,cursor = database.connect_DB('stock.db')
+    # old version (S & P 500 리스트 database에 저장)
+    '''
+    url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+    sp500 = pd.read_html(url)[0]
+
+    
+    sql = 'CREATE TABLE IF NOT EXISTS CompanyInfo (name TEXT, symbol TEXT)'
+    database.sql_exe(cursor,sql,conn)
+    sql = 'DELETE FROM CompanyInfo'
+    database.sql_exe(cursor,sql,conn)
+    for i,row in sp500.iterrows():
+        sql = "INSERT INTO CompanyInfo VALUES(?, ?)"
+        database.sql_exe(cursor,sql,conn,para=(row['Security'],row['Symbol']))
+    '''
+
     sql = "SELECT name FROM CompanyInfo"
-    rows = stock.get_data(sql,cursor)
+    #리스트를 다 돌면서 해당 기업 이름이 포함된 뉴스 존재 체크
+    rows = database.get_data(sql,cursor)
+    sql = 'CREATE TABLE IF NOT EXISTS CompanyNews (name TEXT, title TEXT, url TEXT)'
+    database.sql_exe(cursor,sql,conn)
     for row in rows:
         print(f"---------------------current company {row[0]}--------------------")
-        print(news_data.get_news(row[0]))
+        ans=news_data.get_news(row[0])
+        if ans is None:
+            continue
+        titles = ans[0]
+        urls = ans[1]
+        for title,url in zip(titles, urls):
+            sql = "INSERT INTO CompanyNews VALUES(?, ?, ?)"
+            database.sql_exe(cursor,sql,conn,para=(row[0],title,url))
     
-
+    
     '''
     url = "https://api.nasdaq.com/api/screener/stocks?exchange=nasdaq&download=true"
     reponse = requests.get(url)
@@ -50,4 +79,3 @@ if __name__=='__main__':
     cursor.close()
     conn.close()
     '''
-    

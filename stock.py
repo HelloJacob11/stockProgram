@@ -1,8 +1,6 @@
 import yfinance as yf
 import datetime
 import pytz
-import pandas as pd
-import sqlite3
 import time
 import requests
 '''
@@ -28,24 +26,4 @@ def get_current_price(symbol):
     #현재 가격을 가지고 있지 않으면 비워서 리턴 
     return [date.strftime("%Y-%m-%d %H:%M:%S"),None]
 
-def connect_DB(db_name):
-    conn = sqlite3.connect(db_name)
-    cursor = conn.cursor()
-    print(f"{db_name} connect!")
-    return conn, cursor
-
-def sql_exe(cursor,sql,conn,para=None):
-    #print(sql,para)
-    if para:
-        cursor.execute(sql,para)
-    else:
-        print(sql)
-        cursor.execute(sql)
-    conn.commit()
-
-def get_data(sql,cursor):
-    cursor.execute(sql)
-    rows = cursor.fetchall()
-    return rows
-'test'
 
