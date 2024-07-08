@@ -47,5 +47,5 @@ def get_data(sql,cursor):
     cursor.execute(sql)
     rows = cursor.fetchall()
     return rows
-
+'test'
 
