@@ -15,3 +15,4 @@ def get_news(company):
         for item in items:
             print(item.find('div',class_="n0jPhd ynAwRc MBeuO nDgy9d").get_text())
             print(item.find('a')['href'])
+

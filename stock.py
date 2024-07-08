@@ -48,3 +48,4 @@ def get_data(sql,cursor):
     rows = cursor.fetchall()
     return rows
 
+
