@@ -2,7 +2,7 @@ import yfinance as yf
 import datetime
 import pytz
 import time
-import requests
+
 '''
 get_current_price: 회사 심볼을 파라미터로 전달 받아 뉴욕 시간 기준으로 현재 가격을 리턴하는 함수
 '''

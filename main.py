@@ -1,7 +1,7 @@
 import news_data
 import stock
 import database
-
+import requests
 import pandas as pd
 
 if __name__=='__main__':
@@ -21,13 +21,23 @@ if __name__=='__main__':
         database.sql_exe(cursor,sql,conn,para=(row['Security'],row['Symbol']))
     '''
 
+    url = "https://api.nasdaq.com/api/screener/stocks?exchange=nasdaq&download=true"
+    header = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"}
+    response = requests.get(url,headers=header) 
+    data = response.json()
+    print(data[0])
+    nasdaq = pd.DataFrame(data['data']['rows'])
+    print(nasdaq[:10])
+
+    '''
+
     sql = "SELECT name FROM CompanyInfo"
-    #리스트를 다 돌면서 해당 기업 이름이 포함된 뉴스 존재 체크
+    #리스트를 다 돌면서 해당 기업 이름이 포함된 뉴스 존재 체크 & svae database
     rows = database.get_data(sql,cursor)
     sql = 'CREATE TABLE IF NOT EXISTS CompanyNews (name TEXT, title TEXT, url TEXT)'
     database.sql_exe(cursor,sql,conn)
-    for row in rows:
-        print(f"---------------------current company {row[0]}--------------------")
+    for idx, row in enumerate(rows):
+        print(f"---------------------{ idx+1 }current company {row[0]}--------------------")
         ans=news_data.get_news(row[0])
         if ans is None:
             continue
@@ -36,7 +46,7 @@ if __name__=='__main__':
         for title,url in zip(titles, urls):
             sql = "INSERT INTO CompanyNews VALUES(?, ?, ?)"
             database.sql_exe(cursor,sql,conn,para=(row[0],title,url))
-    
+    '''
     
     '''
     url = "https://api.nasdaq.com/api/screener/stocks?exchange=nasdaq&download=true"
